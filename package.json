@@ -1,0 +1,19 @@
+{
+  "name": "blockathon2017-dormir",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Dormir",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "ethereumjs-wallet": "^0.6.0",
+    "express": "^4.16.2",
+    "fs": "0.0.1-security",
+    "nedb": "^1.8.0",
+    "web3": "^0.20.0"
+  }
+}
