@@ -1,0 +1,113 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bootstrap 3 Button</title>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/webrtc-adapter/3.3.3/adapter.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.10/vue.min.js"></script>
+    <script type="text/javascript" src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
+    <style type="text/css">
+        .example{
+            margin: 20px;
+        }
+    </style>
+    <script>
+      var showed = false;
+        function RunScan(){
+      var app = new Vue({
+        el: '#app',
+        data: {
+          scanner: null,
+          activeCameraId: null,
+          cameras: [],
+          scans: []
+        },
+        mounted: function () {
+          var self = this;
+          self.scanner = new Instascan.Scanner({ video: document.getElementById('preview'), scanPeriod: 5 });
+          let result = self.scanner.scan()
+          if (result !== null){
+             document.getElementById('txbx').value= result;
+          }
+          self.scanner.addListener('scan', function (content, image) {
+            self.scans.unshift({ date: +(Date.now()), content: content });
+            document.getElementById('storeAddr').value = content;
+            self.scanner.stop();
+          });
+          Instascan.Camera.getCameras().then(function (cameras) {
+            self.cameras = cameras;
+            if (cameras.length > 0) {
+              self.activeCameraId = cameras[0].id;
+              self.scanner.start(cameras[0]);
+            } else {
+              console.error('No cameras found.');
+            }
+          }).catch(function (e) {
+            console.error(e);
+          });
+          var resultGet = result.scanner.content;
+          console.log(resultGet);
+        },
+        methods: {
+          formatName: function (name) {
+            return name || '(unknown)';
+          },
+          selectCamera: function (camera) {
+            this.activeCameraId = camera.id;
+            this.scanner.start(camera);
+          }
+        }
+      });
+      }
+      function ShowInfo(){
+        var ele = document.getElementById("inf");
+       if(showed == false){
+           ele.innerHTML = "";
+        }
+	showed = true;
+        var res = [];
+        var a = Math.floor(Math.random() * 10 + 1);
+        for (var i = 0; i < a;i++){
+           res.push(Math.floor((Math.random() * 100) + 1));
+	}
+        for (var i = 0; i < a;i++){
+          ele.innerHTML +=  "Merchant "+(i+1)+": "+res[i]+"Đ<br>";
+	}
+	showed = false;
+      }
+       </script>
+</head>
+<body>
+    <p style="float: top">MERCHANTS' SITE</p>
+    <a href="" style="float: left;">to GUESS' SITE</a>
+    <img src="https://raw.githubusercontent.com/jilkode/blockathon2017-team14/master/templates/logo.png" alt="Hình bo góc"></img>
+    <br>
+    <br>
+    <br>
+    <div class = "container">
+        <div class = "row gird-demo">
+            <div class = "col-lg-6">
+                    <div class = "form-group">
+                        <label>Nhập địa chỉ Address</label>
+                        <input id="storeAddr" type = "text" class = "form-control" placeholder="INPUT PRIVATE KEY">
+                    </div>
+                    <button name="show" onclick="ShowInfo()" class="btn btn-primary"> Tìm Kiếm </button>
+                    <button type="button" class="btn btn-scan" onclick="RunScan()">
+                        <span class="glyphicon glyphicon-qrcode"></span>
+                    </button>
+                    <div class="preview-container" style="margin: 5% 0%;width:150px;height:250px;">
+                        <video id="preview"></video>
+                    </div>
+            </div>
+            <div class = "col-lg-6">
+                <div class="panel panel-default">
+                <div class="panel-heading"> <b>Thông Tin Address</b> </div>
+                <div class="panel-body"><p id="inf">Your Loyalty points are shown here</p></div>
+            </div>
+        </div>
+    </div>
+</html>
